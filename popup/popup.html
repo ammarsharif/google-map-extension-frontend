@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      <div>
+        <h1>Maps Scraper</h1>
+        <p>Find & export business leads</p>
+      </div>
+    </div>
+    <div class="session-badge" id="sessionBadge">Session: --</div>
+    <button id="viewDashboardBtn" class="btn-ghost" style="margin-left: 8px;" title="View all saved leads">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Saved Leads
+    </button>
+  </div>
+
+  <!-- STATUS BAR (hidden by default) -->
+  <div class="status-bar" id="statusBar" style="display:none">
+    <div class="status-icon" id="statusIcon"></div>
+    <span id="statusText"></span>
+  </div>
+
+  <!-- NOT ON MAPS WARNING (hidden by default) -->
+  <div class="not-on-maps" id="notOnMaps" style="display:none">
+    <div class="warning-icon">⚠️</div>
+    <p>You are not on Google Maps</p>
+    <button id="openMapsBtn" class="btn-primary">Open Google Maps</button>
+  </div>
+
+  <!-- SEARCH FORM -->
+  <div class="search-section" id="searchSection">
+    <div class="form-group">
+      <label>Place / Business Type</label>
+      <input type="text" id="placeName" placeholder="e.g. restaurants, dentists, hotels" autocomplete="off"/>
+      <span class="field-hint">What are you looking for?</span>
+    </div>
+    <div class="form-group">
+      <label>City or Country</label>
+      <input type="text" id="location" placeholder="e.g. Dubai, London, Pakistan" autocomplete="off"/>
+      <span class="field-hint">Where to search?</span>
+    </div>
+    <div class="form-group">
+      <label>Search Identifier (Optional)</label>
+      <input type="text" id="searchIdentifier" placeholder="e.g. Campaign 1, NY Hotels" autocomplete="off"/>
+      <span class="field-hint">Tag to group your results in the dashboard</span>
+    </div>
+    <div class="form-row">
+      <div class="form-group half">
+        <label>Results count</label>
+        <select id="resultCount">
+          <option value="10">10 results</option>
+          <option value="25" selected>25 results</option>
+          <option value="50">50 results</option>
+        </select>
+      </div>
+      <div class="form-group half">
+        <label>Mode</label>
+        <select id="scrapeMode">
+          <option value="full">Full detail (phone + web)</option>
+          <option value="fast">Fast (name + address only)</option>
+        </select>
+      </div>
+    </div>
+    <div class="dedup-note" style="display: flex; justify-content: space-between; align-items: center;">
+      <span><span>✓</span> Automatically merges returning results</span>
+      <button id="resetSessionBtn" class="btn-ghost" style="font-size: 11px; padding: 2px 6px;">Clear History</button>
+    </div>
+    <button id="searchBtn" class="btn-primary btn-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      Search Google Maps
+    </button>
+  </div>
+
+  <!-- PROGRESS SECTION (hidden by default) -->
+  <div class="progress-section" id="progressSection" style="display:none">
+    <p class="keep-open-warning">⚠️ Keep this popup open while scraping</p>
+    <div class="progress-header">
+      <span id="progressLabel">Initializing...</span>
+      <span id="progressCount">0 / 0</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-steps" id="progressSteps">
+      <div class="step" id="step1">
+        <span class="step-dot"></span>
+        <span>Navigate to Maps</span>
+      </div>
+      <div class="step" id="step2">
+        <span class="step-dot"></span>
+        <span>Load search results</span>
+      </div>
+      <div class="step" id="step3">
+        <span class="step-dot"></span>
+        <span>Scrape business list</span>
+      </div>
+      <div class="step" id="step4">
+        <span class="step-dot"></span>
+        <span>Collect full details</span>
+      </div>
+      <div class="step" id="step5">
+        <span class="step-dot"></span>
+        <span>Save to database</span>
+      </div>
+    </div>
+    <button id="cancelBtn" class="btn-secondary">Cancel</button>
+  </div>
+
+  <!-- RESULTS SECTION (hidden by default) -->
+  <div class="results-section" id="resultsSection" style="display:none">
+    <div class="results-header">
+      <div class="results-meta">
+        <span class="results-count" id="resultsCount">0 results</span>
+        <span class="excluded-badge" id="excludedBadge" style="display:none"></span>
+      </div>
+      <div class="results-actions">
+        <button id="selectAllBtn" class="btn-ghost">Select all</button>
+        <button id="exportBtn" class="btn-success">Export CSV</button>
+        <button id="newSearchBtn" class="btn-ghost">New search</button>
+      </div>
+    </div>
+    <div class="results-list" id="resultsList"></div>
+  </div>
+
+  <script src="../env.js"></script>
+  <script src="../utils/helpers.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
