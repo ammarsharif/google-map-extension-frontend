@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   exportAllBtn.addEventListener('click', async () => {
     try {
-      const response = await fetch(`${ENV.API_BASE_URL}/businesses/export`, {
-        headers: { 'x-api-key': ENV.API_KEY || 'test-key-123' }
+      const response = await fetch(`${process.env.API_BASE_URL}/businesses/export`, {
+        headers: { 'x-api-key': process.env.API_KEY || 'test-key-123' }
       });
       if (!response.ok) throw new Error('Export failed');
       const blob = await response.blob();
@@ -75,12 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const searchTerm = searchInput.value.trim();
     
-    let url = `${ENV.API_BASE_URL}/businesses?page=${currentPage}&limit=${limit}`;
+    let url = `${process.env.API_BASE_URL}/businesses?page=${currentPage}&limit=${limit}`;
     if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
 
     try {
       const response = await fetch(url, {
-        headers: { 'x-api-key': ENV.API_KEY || 'test-key-123' }
+        headers: { 'x-api-key': process.env.API_KEY || 'test-key-123' }
       });
       const data = await response.json();
 

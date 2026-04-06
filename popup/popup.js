@@ -102,9 +102,9 @@ function bindEvents() {
   if (resetSessionBtn) {
     resetSessionBtn.addEventListener('click', async () => {
       try {
-        await fetch(`${ENV.API_BASE_URL}/session/${state.sessionId}/reset`, {
+        await fetch(`${process.env.API_BASE_URL}/session/${state.sessionId}/reset`, {
           method: 'POST',
-          headers: { 'x-api-key': ENV.API_KEY || 'test-key-123' }
+          headers: { 'x-api-key': process.env.API_KEY || 'test-key-123' }
         });
         await new Promise(r => chrome.storage.local.remove(['seenKeys'], r));
         showMessage("History cleared on backend.", 'success');
@@ -216,9 +216,9 @@ async function handleSearch() {
       updateProgress(55, `Checking ${businesses.length} results against database...`, 0, businesses.length);
       try {
         const placeIdsToCheck = businesses.map(b => b.placeId).filter(Boolean);
-        const filterRes = await fetch(`${ENV.API_BASE_URL}/businesses/filter-new`, {
+        const filterRes = await fetch(`${process.env.API_BASE_URL}/businesses/filter-new`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': ENV.API_KEY },
+          headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.API_KEY },
           body: JSON.stringify({ placeIds: placeIdsToCheck })
         });
         if (filterRes.ok) {
@@ -273,11 +273,11 @@ async function handleSearch() {
     updateProgress(90, 'Saving to database...', businesses.length, businesses.length);
     
     try {
-      const dbResponse = await fetch(`${ENV.API_BASE_URL}/search`, {
+      const dbResponse = await fetch(`${process.env.API_BASE_URL}/search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': ENV.API_KEY
+          'x-api-key': process.env.API_KEY
         },
         body: JSON.stringify({
           placeName,
@@ -509,11 +509,11 @@ async function handleExport() {
 
   try {
     const idsParams = toExport.map(b => b.id).filter(Boolean).join(',');
-    const url = `${ENV.API_BASE_URL}/search/${state.searchId}/export?ids=${encodeURIComponent(idsParams)}`;
+    const url = `${process.env.API_BASE_URL}/search/${state.searchId}/export?ids=${encodeURIComponent(idsParams)}`;
 
     // Must use fetch so we can send x-api-key header (bare <a> tags cannot)
     const resp = await fetch(url, {
-      headers: { 'x-api-key': ENV.API_KEY }
+      headers: { 'x-api-key': process.env.API_KEY }
     });
 
     if (!resp.ok) throw new Error(`Export request failed: ${resp.status}`);
